@@ -38,11 +38,14 @@ waves_compress_card = SV("waves面板图压缩", priority=5, pm=1)
     (
         "刷新面板",
         "刷新面包",
+        "刷新🍞",
         "更新面板",
+        "更新🍞",
         "更新面包",
         "强制刷新",
         "面板刷新",
         "面包刷新",
+        "🍞刷新",
         "面板更新",
         "面板",
         "面包",
@@ -118,7 +121,7 @@ async def send_char_detail_msg(bot: Bot, ev: Event):
 
 
 @waves_new_char_detail.on_regex(
-    rf"(?P<waves_id>\d+)?(?P<char>{PATTERN})(?P<query_type>面板|面包|伤害(?P<damage>(\d+)?))(?P<is_pk>pk|对比|PK|比|比较)?(\s*)?(?P<change_list>((换[^换]*)*)?)",
+    rf"(?P<waves_id>\d+)?(?P<char>{PATTERN})(?P<query_type>面板|面包|🍞|伤害(?P<damage>(\d+)?))(?P<is_pk>pk|对比|PK|比|比较)?(\s*)?(?P<change_list>((换[^换]*)*)?)",
     block=True,
 )
 async def send_char_detail_msg2(bot: Bot, ev: Event):
