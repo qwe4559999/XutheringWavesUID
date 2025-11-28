@@ -24,16 +24,57 @@ from .upload_card import (
     upload_custom_card,
 )
 
-waves_new_get_char_info = SV("waves新获取面板", priority=3)
-waves_new_get_one_char_info = SV("waves新获取单个角色面板", priority=3)
-waves_new_char_detail = SV("waves新角色面板", priority=4)
-waves_char_detail = SV("waves角色面板", priority=5)
 waves_upload_char = SV("waves上传面板图", priority=3, pm=1)
 waves_char_card_list = SV("waves面板图列表", priority=3, pm=1)
 waves_delete_char_card = SV("waves删除面板图", priority=3, pm=1)
 waves_delete_all_card = SV("waves删除全部面板图", priority=5, pm=1)
 waves_compress_card = SV("waves面板图压缩", priority=5, pm=1)
+waves_new_get_char_info = SV("waves新获取面板", priority=3)
+waves_new_get_one_char_info = SV("waves新获取单个角色面板", priority=3)
+waves_new_char_detail = SV("waves新角色面板", priority=4)
+waves_char_detail = SV("waves角色面板", priority=5)
 
+
+@waves_upload_char.on_regex(rf"^上传(?P<char>{PATTERN})面板图$", block=True)
+async def upload_char_img(bot: Bot, ev: Event):
+    char = ev.regex_dict.get("char")
+    if not char:
+        return
+    await upload_custom_card(bot, ev, char)
+
+
+@waves_char_card_list.on_regex(rf"^(?P<char>{PATTERN})面板图列表$", block=True)
+async def get_char_card_list(bot: Bot, ev: Event):
+    char = ev.regex_dict.get("char")
+    if not char:
+        return
+    await get_custom_card_list(bot, ev, char)
+
+
+@waves_delete_char_card.on_regex(
+    rf"^删除(?P<char>{PATTERN})面板图(?P<hash_id>[a-zA-Z0-9]+)$", block=True
+)
+async def delete_char_card(bot: Bot, ev: Event):
+    char = ev.regex_dict.get("char")
+    hash_id = ev.regex_dict.get("hash_id")
+    if not char or not hash_id:
+        return
+    await delete_custom_card(bot, ev, char, hash_id)
+
+
+@waves_delete_all_card.on_regex(rf"^删除全部(?P<char>{PATTERN})面板图$", block=True)
+async def delete_all_char_card(bot: Bot, ev: Event):
+    char = ev.regex_dict.get("char")
+    if not char:
+        return
+    await delete_all_custom_card(bot, ev, char)
+
+
+@waves_compress_card.on_fullmatch("压缩面板图", block=True)
+async def compress_char_card(bot: Bot, ev: Event):
+    await compress_all_custom_card(bot, ev)
+    
+    
 @waves_new_get_char_info.on_fullmatch(
     (
         "刷新面板",
@@ -241,43 +282,3 @@ async def send_char_detail_msg2_weight(bot: Bot, ev: Event):
         at_sender = True
     if isinstance(im, str) or isinstance(im, bytes):
         return await bot.send(im, at_sender)
-
-
-@waves_upload_char.on_regex(rf"^上传(?P<char>{PATTERN})面板图$", block=True)
-async def upload_char_img(bot: Bot, ev: Event):
-    char = ev.regex_dict.get("char")
-    if not char:
-        return
-    await upload_custom_card(bot, ev, char)
-
-
-@waves_char_card_list.on_regex(rf"^(?P<char>{PATTERN})面板图列表$", block=True)
-async def get_char_card_list(bot: Bot, ev: Event):
-    char = ev.regex_dict.get("char")
-    if not char:
-        return
-    await get_custom_card_list(bot, ev, char)
-
-
-@waves_delete_char_card.on_regex(
-    rf"^删除(?P<char>{PATTERN})面板图(?P<hash_id>[a-zA-Z0-9]+)$", block=True
-)
-async def delete_char_card(bot: Bot, ev: Event):
-    char = ev.regex_dict.get("char")
-    hash_id = ev.regex_dict.get("hash_id")
-    if not char or not hash_id:
-        return
-    await delete_custom_card(bot, ev, char, hash_id)
-
-
-@waves_delete_all_card.on_regex(rf"^删除全部(?P<char>{PATTERN})面板图$", block=True)
-async def delete_all_char_card(bot: Bot, ev: Event):
-    char = ev.regex_dict.get("char")
-    if not char:
-        return
-    await delete_all_custom_card(bot, ev, char)
-
-
-@waves_compress_card.on_fullmatch("压缩面板图", block=True)
-async def compress_char_card(bot: Bot, ev: Event):
-    await compress_all_custom_card(bot, ev)
